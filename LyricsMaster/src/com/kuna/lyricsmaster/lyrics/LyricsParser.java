@@ -28,42 +28,17 @@ public class LyricsParser {
 	private String lrcData;
 	
 	public boolean SearchAlsongServer(String title, String artist) {
-		lrcData = "";
-		
-		try {
-			URL url = new URL("http://lyrics.alsong.co.kr/alsongwebservice/service1.asmx");
-			URLConnection con = url.openConnection();
-			
-			System.setProperty("http.agent", "gSOAP/2.7");
-			con.setRequestProperty("User-Agent", "gSOAP/2.7");
-			con.setRequestProperty("Content-Type", "application/soap+xml; charset=utf-8");
-			con.setRequestProperty("Connection", "close");
-			con.setRequestProperty("SOAPAction", "ALSongWebServer/GetLyric5");
-			//con.setRequestProperty("Accept-Language", "ko-kr,ko;q=0.8,en-us;q=0.5,en;q=0.3");
-			con.setDoOutput(true);		// set POST request
-			String parameter = CreateSearchString(title, artist, 243000);//URLEncoder.encode(CreateRequestString(md5), "UTF-8");
-			OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
-			wr.write(parameter);
-			wr.flush();
-			
-			// get response
-			BufferedReader rd = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
-			String line;
-			while ((line = rd.readLine()) != null) {
-				lrcData += line;
-			}
-			
-			return true;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return false;
-		
+		String parameter = CreateSearchString(title, artist);
+		return RequestAlsongServerParameter(parameter);
 	}
 	
 	public boolean RequestAlsongServer(String md5) {
+		String parameter = CreateRequestString(md5);//URLEncoder.encode(CreateRequestString(md5), "UTF-8");
+		return RequestAlsongServerParameter(parameter);
+	}
+	
+	
+	public boolean RequestAlsongServerParameter(String parameter) {
 		lrcData = "";
 		
 		try {
@@ -75,9 +50,7 @@ public class LyricsParser {
 			con.setRequestProperty("Content-Type", "application/soap+xml; charset=utf-8");
 			con.setRequestProperty("Connection", "close");
 			con.setRequestProperty("SOAPAction", "ALSongWebServer/GetLyric5");
-			//con.setRequestProperty("Accept-Language", "ko-kr,ko;q=0.8,en-us;q=0.5,en;q=0.3");
 			con.setDoOutput(true);		// set POST request
-			String parameter = CreateRequestString(md5);//URLEncoder.encode(CreateRequestString(md5), "UTF-8");
 			OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
 			wr.write(parameter);
 			wr.flush();
@@ -125,7 +98,7 @@ public class LyricsParser {
 		return PostStr_A1 + md5 + PostStr_A2 + GetMACAddress() + PostStr_A3;
 	}
 	
-	private String CreateSearchString(String title, String artist, int time) {
+	private String CreateSearchString(String title, String artist) {
 		String PostStr_A1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                 "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://www.w3.org/2003/05/soap-envelope\" " +
                 "xmlns:SOAP-ENC=\"http://www.w3.org/2003/05/soap-encoding\" " +

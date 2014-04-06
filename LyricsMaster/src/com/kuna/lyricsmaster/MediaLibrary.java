@@ -2,6 +2,7 @@ package com.kuna.lyricsmaster;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import android.app.Application;
 import android.content.Context;
@@ -83,11 +84,13 @@ public class MediaLibrary {
 		// if parentpath is null? then get it from null string
 		// you'd better to add '..' function to go back
 		
+		@SuppressWarnings("unchecked")
 		ArrayList<String> pathListcpy = (ArrayList<String>) mlDirList.clone();
 		
 		// 1. filters first
 		Log.i("REMOVE", parentPath);
 		if (parentPath.length() > 0) {
+			//parentPath += "\\";
 			for (int i=0; i<pathListcpy.size(); i++) {
 				if (!pathListcpy.get(i).toLowerCase().startsWith(parentPath.toLowerCase())) {
 					pathListcpy.remove(i);
@@ -97,15 +100,18 @@ public class MediaLibrary {
 		}
 		
 		// 2. make only top folder list
-		for (int j=0; j<pathListcpy.size(); j++) {
+		/*for (int j=0; j<pathListcpy.size(); j++) {
 			for (int i=j+1; i<pathListcpy.size(); i++) {
 				String s = pathListcpy.get(j);
-				if (s.length() > 0 && !pathListcpy.get(i).equals(s) && pathListcpy.get(i).startsWith(s)) {
-					pathListcpy.remove(i);
-					i--;
+				if (s.length() > 0) {
+					s += "\\";
+					if (pathListcpy.get(i).startsWith(s)) {
+						pathListcpy.remove(i);
+						i--;
+					}
 				}
 			}
-		}
+		}*/
 		
 		return pathListcpy;
 	}

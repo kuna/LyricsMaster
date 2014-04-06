@@ -54,7 +54,7 @@ public class SearchDialog extends Dialog {
 			}
 		});
 		
-		btn = (Button)findViewById(com.kuna.lyricsmaster.R.id.btnCancel);
+		btn = (Button)findViewById(com.kuna.lyricsmaster.R.id.btn_cancel);
 		btn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View arg0) {

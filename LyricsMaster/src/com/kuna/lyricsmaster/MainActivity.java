@@ -3,6 +3,7 @@ package com.kuna.lyricsmaster;
 import java.io.File;
 import java.util.ArrayList;
 
+import com.kuna.lyricsmaster.dialog.NameSearchDialog;
 import com.kuna.lyricsmaster.dialog.SearchDialog;
 import com.kuna.lyricsmaster.lyrics.LyricsData;
 import com.kuna.lyricsmaster.lyrics.LyricsParser;
@@ -46,6 +47,10 @@ public class MainActivity extends Activity {
 	
 	ArrayList<MusicInfo> arrmi;
 	Handler mhandler;
+	
+	// dialog
+	NameSearchDialog searchDlg;
+	SearchDialog sDlg;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +87,7 @@ public class MainActivity extends Activity {
 				MusicInfo mi = arrmi.get(pos);
 				
 				// show search dialog
-				SearchDialog sDlg = new SearchDialog(_c, mi, mhandler);
+				sDlg = new SearchDialog(_c, mi, mhandler);
 				sDlg.setTitle("가사 검색창");
 				sDlg.show();
 				
@@ -128,10 +133,33 @@ public class MainActivity extends Activity {
 				dirDlg.show();
 			}
 		});
+		
 		bSetting.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(_c, "구현 안 함.\n이건 도움말로 대체함.\n노래 오래 누르면 검색창으로 노래 가사 집어넣을수도 있다.\n꼬우면 여기로 멘션 보내던가...\n@lazykuna", Toast.LENGTH_SHORT).show();
+				// show path select dialog
+				searchDlg = new NameSearchDialog(_c, new OnClickListener() {
+					@Override
+					public void onClick(View arg0) {
+						String searchText = searchDlg.edit_search.getText().toString();
+						if (searchText.length() <= 0) return;
+						for (int i=0; i<arrmi.size(); i++) {
+							boolean del = true;
+							MusicInfo mi = arrmi.get(i);
+							if (mi.title.toLowerCase().indexOf(searchText.toLowerCase()) >= 0) del = false;
+							if (mi.artist.toLowerCase().indexOf(searchText.toLowerCase()) >= 0) del = false;
+							if (mi.path.toLowerCase().indexOf(searchText.toLowerCase()) >= 0) del = false;
+							if (del) {
+								arrmi.remove(i);
+								i--;
+							}
+						}
+						setListViewItem(arrmi);
+						searchDlg.dismiss();
+					}
+				});
+				searchDlg.setTitle("검색");
+				searchDlg.show();
 			}
 		});
 		bSubmit.setOnClickListener(new OnClickListener() {
@@ -148,6 +176,9 @@ public class MainActivity extends Activity {
 		
 		// init listview
 		setListViewItem(ml.getMusicListFromDirectory(""));
+		
+		// alarm
+		Toast.makeText(_c, "노래 오래 누르면 검색창으로 노래 가사 집어넣을수도 있다.\n문의는 @lazykuna로", Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
